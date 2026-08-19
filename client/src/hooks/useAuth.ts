@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../state/store';
+import type { RootState } from '../state/store';
 import { login, register, logout } from '../api/auth.api';
 import { setCredentials, clearCredentials, setLoading, setError } from '../state/slices/auth.slice';
 import type { LoginDTO } from '../api/generated/models/LoginDTO';

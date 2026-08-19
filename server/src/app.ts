@@ -19,10 +19,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.get("/", (_req: Request, res: Response) => {
-  res.json({ success: true, message: "E-commerce backend is running" });
-});
-
 app.get(["/docs.json", "/openapi.json", "/api-docs.json"], (_req: Request, res: Response) => {
   res.setHeader("Content-Type", "application/json");
   res.send(swaggerSpec);

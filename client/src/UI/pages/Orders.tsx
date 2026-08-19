@@ -78,7 +78,6 @@ export const Orders: React.FC = () => {
 
         <div className="space-y-6">
           {orders.map((order: any) => {
-            const shippingCost = order.totalAmount > 999 ? 0 : 99;
             return (
               <div 
                 key={order._id} 
