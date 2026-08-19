@@ -12,7 +12,7 @@ class OrderRepository {
   async findByUserId(userId: string): Promise<IOrder[]> {
     return Order.find({ user: userId })
       .sort({ createdAt: -1 })
-      .populate("items.product", "name price");
+      .populate("items.product", "name price imageUrl");
   }
 }
 

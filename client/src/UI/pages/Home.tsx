@@ -17,7 +17,7 @@ export const Home: React.FC = () => {
     fetchProducts(selectedCategory, searchQuery);
     fetchCart();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [selectedCategory, searchQuery]);
 
   return (
     <div className="flex flex-col min-h-screen">

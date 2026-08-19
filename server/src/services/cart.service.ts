@@ -32,14 +32,14 @@ class CartService extends CartContract {
     }
 
     await cartRepository.save(cart);
-    await cart.populate("items.product", "name price stock");
+    await cart.populate("items.product", "name price stock imageUrl");
     return cart;
   }
 
   async getCart(userId: string): Promise<ICart | null> {
     const cart = await cartRepository.findByUserId(userId);
     if (!cart) return null;
-    await cart.populate("items.product", "name price stock");
+    await cart.populate("items.product", "name price stock imageUrl");
     return cart;
   }
 
@@ -61,7 +61,7 @@ class CartService extends CartContract {
 
     item.quantity = quantity;
     await cartRepository.save(cart);
-    await cart.populate("items.product", "name price stock");
+    await cart.populate("items.product", "name price stock imageUrl");
     return cart;
   }
 
@@ -71,7 +71,7 @@ class CartService extends CartContract {
 
     cart.items = cart.items.filter((item) => item.product.toString() !== productId);
     await cartRepository.save(cart);
-    await cart.populate("items.product", "name price stock");
+    await cart.populate("items.product", "name price stock imageUrl");
     return cart;
   }
 }
