@@ -3,7 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { useAuth } from '../../hooks/useAuth';
-import { User, Mail, Lock, LogIn, UserPlus, AlertCircle, ShoppingBag, Eye, EyeOff } from 'lucide-react';
+import { createProduct } from '../../api/product.api';
+import { User, Mail, Lock, LogIn, UserPlus, AlertCircle, ShoppingBag, Eye, EyeOff, PlusCircle, X } from 'lucide-react';
 
 export const Profile: React.FC = () => {
   const navigate = useNavigate();
@@ -17,6 +18,56 @@ export const Profile: React.FC = () => {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+  const [productForm, setProductForm] = useState({
+    name: '',
+    description: '',
+    price: '',
+    category: 'SNEAKERS',
+    stock: '',
+    imageUrl: '',
+  });
+  const [isSubmittingProduct, setIsSubmittingProduct] = useState(false);
+
+  const handleProductSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!productForm.name || !productForm.price || !productForm.category) {
+      alert('Please fill out all required fields.');
+      return;
+    }
+
+    setIsSubmittingProduct(true);
+    try {
+      const response = await createProduct({
+        name: productForm.name,
+        description: productForm.description,
+        price: Number(productForm.price),
+        category: productForm.category,
+        stock: Number(productForm.stock || 0),
+        imageUrl: productForm.imageUrl || 'https://via.placeholder.com/600',
+      });
+
+      if (response.success) {
+        alert('Product created successfully!');
+        setIsAdminModalOpen(false);
+        setProductForm({
+          name: '',
+          description: '',
+          price: '',
+          category: 'SNEAKERS',
+          stock: '',
+          imageUrl: '',
+        });
+      } else {
+        alert(response.message || 'Failed to create product.');
+      }
+    } catch (err: any) {
+      alert(err.response?.data?.message || err.message || 'Failed to create product.');
+    } finally {
+      setIsSubmittingProduct(false);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -93,6 +144,15 @@ export const Profile: React.FC = () => {
                   <ShoppingBag size={14} />
                   <span>View Orders</span>
                 </Link>
+                {user?.role === 'admin' && (
+                  <button
+                    onClick={() => setIsAdminModalOpen(true)}
+                    className="h-12 bg-neutral-900 text-white rounded-full flex items-center justify-center space-x-2 font-semibold uppercase tracking-wider text-xs hover:bg-neutral-800 transition-all shadow-md cursor-pointer"
+                  >
+                    <PlusCircle size={14} />
+                    <span>Add New Product</span>
+                  </button>
+                )}
                 <button
                   onClick={logout}
                   className="h-12 border border-neutral-200 text-neutral-700 rounded-full flex items-center justify-center font-semibold uppercase tracking-wider text-xs hover:bg-neutral-50 hover:text-black transition-all cursor-pointer"
@@ -211,6 +271,109 @@ export const Profile: React.FC = () => {
         </div>
       </main>
       <Footer />
+
+      {/* Admin Modal */}
+      {isAdminModalOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl w-full max-w-md p-6 relative shadow-2xl max-h-[90vh] overflow-y-auto">
+            <button
+              onClick={() => setIsAdminModalOpen(false)}
+              className="absolute top-4 right-4 text-neutral-400 hover:text-black cursor-pointer"
+              aria-label="Close modal"
+            >
+              <X size={20} />
+            </button>
+            
+            <div className="space-y-4 text-left">
+              <h2 className="text-xl font-black uppercase tracking-wider text-black">Create Product</h2>
+              <form onSubmit={handleProductSubmit} className="space-y-3">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400">Product Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={productForm.name}
+                    onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
+                    className="w-full px-3 py-2 border border-neutral-200 rounded-xl bg-neutral-50 focus:outline-none focus:border-black text-xs font-medium"
+                    placeholder="e.g. Kapde Wala Sneaker V2"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400">Description</label>
+                  <textarea
+                    value={productForm.description}
+                    onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
+                    className="w-full px-3 py-2 border border-neutral-200 rounded-xl bg-neutral-50 focus:outline-none focus:border-black text-xs font-medium min-h-[60px]"
+                    placeholder="Product description..."
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400">Price (INR) *</label>
+                    <input
+                      type="number"
+                      required
+                      min="0"
+                      value={productForm.price}
+                      onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
+                      className="w-full px-3 py-2 border border-neutral-200 rounded-xl bg-neutral-50 focus:outline-none focus:border-black text-xs font-medium"
+                      placeholder="8999"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400">Stock Qty</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={productForm.stock}
+                      onChange={(e) => setProductForm({ ...productForm, stock: e.target.value })}
+                      className="w-full px-3 py-2 border border-neutral-200 rounded-xl bg-neutral-50 focus:outline-none focus:border-black text-xs font-medium"
+                      placeholder="25"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400">Category *</label>
+                  <select
+                    value={productForm.category}
+                    onChange={(e) => setProductForm({ ...productForm, category: e.target.value })}
+                    className="w-full px-3 py-2 border border-neutral-200 rounded-xl bg-neutral-50 focus:outline-none focus:border-black text-xs font-medium"
+                  >
+                    <option value="SNEAKERS">SNEAKERS</option>
+                    <option value="CLOTHING">CLOTHING</option>
+                    <option value="ACCESSORIES">ACCESSORIES</option>
+                    <option value="WATCHES">WATCHES</option>
+                    <option value="BAGS">BAGS</option>
+                    <option value="SALE">SALE</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400">Image URL</label>
+                  <input
+                    type="url"
+                    value={productForm.imageUrl}
+                    onChange={(e) => setProductForm({ ...productForm, imageUrl: e.target.value })}
+                    className="w-full px-3 py-2 border border-neutral-200 rounded-xl bg-neutral-50 focus:outline-none focus:border-black text-xs font-medium"
+                    placeholder="https://images.unsplash.com/..."
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmittingProduct}
+                  className="w-full h-11 bg-black text-white rounded-full flex items-center justify-center font-semibold uppercase tracking-wider text-xs hover:bg-neutral-900 transition-all cursor-pointer mt-4"
+                >
+                  {isSubmittingProduct ? 'Creating...' : 'Create Product'}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
