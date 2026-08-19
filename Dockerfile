@@ -3,33 +3,37 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files first to leverage Docker layer caching
+# Copy package files for both client and server
 COPY server/package*.json ./server/
+COPY client/package*.json ./client/
 
-# Install dependencies in the server subdirectory
-WORKDIR /app/server
-RUN npm ci
+# Install dependencies for both projects
+RUN npm ci --prefix server
+RUN npm ci --prefix client
 
-# Copy the rest of the server source code
-WORKDIR /app
+# Copy source code for both projects
 COPY server/ ./server/
+COPY client/ ./client/
 
-# Build the TypeScript project into JS
-WORKDIR /app/server
-RUN npm run build
+# Build both frontend and backend
+RUN npm run build --prefix server
+RUN npm run build --prefix client
 
 # Production stage
 FROM node:20-alpine
 
+WORKDIR /app
+
+# Copy server production dependencies and build artifacts
+COPY --from=builder /app/server/package*.json ./server/
+COPY --from=builder /app/server/node_modules ./server/node_modules
+COPY --from=builder /app/server/dist ./server/dist
+
+# Copy client built assets so the server can serve them at runtime
+COPY --from=builder /app/client/dist ./client/dist
+
+# Run from the server directory
 WORKDIR /app/server
-
-# Copy production dependencies and build artifacts from builder stage
-COPY --from=builder /app/server/package*.json ./
-COPY --from=builder /app/server/node_modules ./node_modules
-COPY --from=builder /app/server/dist ./dist
-
-# Copy env.example as a fallback (.env variables should be set in Render settings)
-COPY --from=builder /app/server/.env.example ./
 
 EXPOSE 5000
 
