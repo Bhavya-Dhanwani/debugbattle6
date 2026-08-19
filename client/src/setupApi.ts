@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { OpenAPI } from './api/core/OpenAPI';
-import { UsersService } from './api/services/UsersService';
+import { OpenAPI } from './api/generated/core/OpenAPI';
+import { UsersService } from './api/generated/services/UsersService';
 
 // Initialize configuration
 OpenAPI.BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';

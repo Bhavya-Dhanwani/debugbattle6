@@ -46,4 +46,50 @@ export class CartService {
             },
         });
     }
+    /**
+     * Update cart item quantity
+     * Updates the quantity of a product in the authenticated user's cart.
+     * @param requestBody
+     * @returns CartResponse Cart item updated successfully
+     * @throws ApiError
+     */
+    public static updateCartItem(
+        requestBody: AddCartItemDTO,
+    ): CancelablePromise<CartResponse> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/cart',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `Bad request (e.g. invalid product ID or insufficient stock)`,
+                401: `Not authorized`,
+                404: `Cart or product not found`,
+                500: `Server error`,
+            },
+        });
+    }
+    /**
+     * Remove item from cart
+     * Removes a product from the authenticated user's cart.
+     * @param productId MongoDB identifier of the product to remove
+     * @returns CartResponse Item removed from cart successfully
+     * @throws ApiError
+     */
+    public static removeItemFromCart(
+        productId: string,
+    ): CancelablePromise<CartResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/cart/{productId}',
+            path: {
+                'productId': productId,
+            },
+            errors: {
+                401: `Not authorized`,
+                404: `Cart not found`,
+                500: `Server error`,
+            },
+        });
+    }
 }

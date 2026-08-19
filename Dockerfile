@@ -1,35 +1,37 @@
-FROM node:24-alpine as client
+# Build stage
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY client/package*.json ./
+# Copy package files first to leverage Docker layer caching
+COPY server/package*.json ./server/
 
-RUN npm install
+# Install dependencies in the server subdirectory
+WORKDIR /app/server
+RUN npm ci
 
-COPY client/ .
+# Copy the rest of the server source code
+WORKDIR /app
+COPY server/ ./server/
 
+# Build the TypeScript project into JS
+WORKDIR /app/server
 RUN npm run build
 
-FROM node:24-alpine as server
+# Production stage
+FROM node:20-alpine
 
-WORKDIR /app
+WORKDIR /app/server
 
-COPY server/package*.json ./
+# Copy production dependencies and build artifacts from builder stage
+COPY --from=builder /app/server/package*.json ./
+COPY --from=builder /app/server/node_modules ./node_modules
+COPY --from=builder /app/server/dist ./dist
 
-RUN npm install
+# Copy env.example as a fallback (.env variables should be set in Render settings)
+COPY --from=builder /app/server/.env.example ./
 
-COPY server/ .
+EXPOSE 5000
 
-RUN npm run build
-
-FROM node:24-alpine
-
-WORKDIR /app
-
-COPY --from=server /app/dist ./
-
-COPY --from=client /app/dist ./public
-
-EXPOSE 3000
-
-CMD ["npm", "start"]
+# Start the compiled JS server
+CMD ["node", "dist/server.js"]
