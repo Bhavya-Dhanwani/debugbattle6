@@ -3,7 +3,7 @@ import { OpenAPI } from './api/generated/core/OpenAPI';
 import { UsersService } from './api/generated/services/UsersService';
 
 // Initialize configuration
-OpenAPI.BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+OpenAPI.BASE = import.meta.env.VITE_API_BASE_URL || window.location.origin;
 
 // Assign token dynamically to the generated client's options resolver
 OpenAPI.TOKEN = async () => {
