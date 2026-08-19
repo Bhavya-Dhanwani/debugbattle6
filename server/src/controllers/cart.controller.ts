@@ -24,6 +24,28 @@ class CartController {
       next(error);
     }
   }
+
+  async updateCartItem(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      if (!req.user) throw new ApiError(401, "Not authorized");
+      const { productId, quantity } = req.body;
+      const cart = await cartService.updateCartItem(req.user.id, productId, quantity);
+      res.status(200).json(new ApiResponse(200, cart, "Cart item updated successfully"));
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async removeItem(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      if (!req.user) throw new ApiError(401, "Not authorized");
+      const { productId } = req.params;
+      const cart = await cartService.removeItemFromCart(req.user.id, productId);
+      res.status(200).json(new ApiResponse(200, cart, "Item removed from cart successfully"));
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new CartController();

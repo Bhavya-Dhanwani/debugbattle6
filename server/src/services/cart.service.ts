@@ -42,6 +42,38 @@ class CartService extends CartContract {
     await cart.populate("items.product", "name price stock");
     return cart;
   }
+
+  async updateCartItem(userId: string, productId: string, quantity: number): Promise<ICart> {
+    if (!productId || quantity === undefined || quantity < 1) {
+      throw new ApiError(400, "productId and a valid quantity are required");
+    }
+    const cart = await cartRepository.findByUserId(userId);
+    if (!cart) throw new ApiError(404, "Cart not found");
+
+    const item = cart.items.find((item) => item.product.toString() === productId);
+    if (!item) throw new ApiError(404, "Product not in cart");
+
+    const product = await productRepository.findById(productId);
+    if (!product) throw new ApiError(404, "Product not found");
+    if (product.stock < quantity) {
+      throw new ApiError(400, "Insufficient stock for this product");
+    }
+
+    item.quantity = quantity;
+    await cartRepository.save(cart);
+    await cart.populate("items.product", "name price stock");
+    return cart;
+  }
+
+  async removeItemFromCart(userId: string, productId: string): Promise<ICart> {
+    const cart = await cartRepository.findByUserId(userId);
+    if (!cart) throw new ApiError(404, "Cart not found");
+
+    cart.items = cart.items.filter((item) => item.product.toString() !== productId);
+    await cartRepository.save(cart);
+    await cart.populate("items.product", "name price stock");
+    return cart;
+  }
 }
 
 export default new CartService();

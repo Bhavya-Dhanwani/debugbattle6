@@ -4,7 +4,7 @@ const port = process.env.PORT || 5000;
 
 const swaggerOptions: swaggerJsdoc.Options = {
   definition: {
-    openapi: "3.0.3",
+    openapi: "3.1.0",
     info: {
       title: "E-Commerce API Documentation",
       version: "1.0.0",

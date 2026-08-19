@@ -3,7 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import routes from "./routes";
 import { errorHandler, notFound } from "./middlewares/error.middleware";
-import swaggerUi from "swagger-ui-express";
+import { apiReference } from "@scalar/express-api-reference";
 import swaggerSpec from "./config/swagger";
 
 const app: Application = express();
@@ -28,11 +28,12 @@ app.get(["/docs.json", "/openapi.json", "/api-docs.json"], (_req: Request, res: 
 });
 
 app.use(
-  ["/docs", "/api-docs"],
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec, {
-    explorer: true,
-    customSiteTitle: "E-Commerce API Docs",
+  "/docs",
+  apiReference({
+    showDeveloperTools: "never",
+    spec: {
+      content: swaggerSpec,
+    },
   })
 );
 
