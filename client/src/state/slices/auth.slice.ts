@@ -38,7 +38,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setCredentials(
-      state,
+      state: AuthState,
       action: PayloadAction<{ user: User; accessToken: string; refreshToken: string }>
     ) {
       const { user, accessToken, refreshToken } = action.payload;
@@ -52,7 +52,7 @@ const authSlice = createSlice({
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
     },
-    clearCredentials(state) {
+    clearCredentials(state: AuthState) {
       state.user = null;
       state.accessToken = null;
       state.refreshToken = null;
@@ -63,10 +63,10 @@ const authSlice = createSlice({
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
     },
-    setLoading(state, action: PayloadAction<boolean>) {
+    setLoading(state: AuthState, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
-    setError(state, action: PayloadAction<string | null>) {
+    setError(state: AuthState, action: PayloadAction<string | null>) {
       state.error = action.payload;
     },
   },

@@ -31,25 +31,27 @@ export const Shop: React.FC = () => {
   }, [searchParams]);
 
   const handleCategoryClick = (cat: string) => {
-    setSearchParams((prev) => {
+    setSearchParams((prev: URLSearchParams) => {
+      const next = new URLSearchParams(prev);
       if (cat === 'ALL') {
-        prev.delete('category');
+        next.delete('category');
       } else {
-        prev.set('category', cat);
+        next.set('category', cat);
       }
-      return prev;
+      return next;
     });
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
-    setSearchParams((prev) => {
+    setSearchParams((prev: URLSearchParams) => {
+      const next = new URLSearchParams(prev);
       if (!val) {
-        prev.delete('search');
+        next.delete('search');
       } else {
-        prev.set('search', val);
+        next.set('search', val);
       }
-      return prev;
+      return next;
     });
   };
 
@@ -92,7 +94,7 @@ export const Shop: React.FC = () => {
                 Categories
               </h2>
               <nav className="flex flex-col space-y-1">
-                {categories.map((cat) => {
+                {categories.map((cat: string) => {
                   const isActive = selectedCategory === cat;
                   return (
                     <button
@@ -114,7 +116,7 @@ export const Shop: React.FC = () => {
 
           {/* Categories Horizontal - Mobile */}
           <div className="lg:hidden w-full overflow-x-auto no-scrollbar scroll-smooth flex space-x-2 pb-4">
-            {categories.map((cat) => {
+            {categories.map((cat: string) => {
               const isActive = selectedCategory === cat;
               return (
                 <button

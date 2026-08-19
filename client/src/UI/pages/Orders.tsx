@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { useOrders } from '../../hooks/useOrders';
-import { ShoppingBag, ArrowLeft, Package, Check, Calendar } from 'lucide-react';
+import { ArrowLeft, Package, Check, Calendar } from 'lucide-react';
 
 export const Orders: React.FC = () => {
-  const { orders, loading, error, fetchOrders } = useOrders();
+  const { orders, loading, fetchOrders } = useOrders();
 
   useEffect(() => {
     fetchOrders();

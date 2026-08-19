@@ -36,23 +36,23 @@ const productSlice = createSlice({
   name: 'product',
   initialState,
   reducers: {
-    setProducts(state, action: PayloadAction<Product[]>) {
+    setProducts(state: ProductState, action: PayloadAction<Product[]>) {
       state.products = action.payload;
       state.error = null;
     },
-    setSelectedCategory(state, action: PayloadAction<string>) {
+    setSelectedCategory(state: ProductState, action: PayloadAction<string>) {
       state.selectedCategory = action.payload;
     },
-    setSearchQuery(state, action: PayloadAction<string>) {
+    setSearchQuery(state: ProductState, action: PayloadAction<string>) {
       state.searchQuery = action.payload;
     },
-    setSelectedProduct(state, action: PayloadAction<Product | null>) {
+    setSelectedProduct(state: ProductState, action: PayloadAction<Product | null>) {
       state.selectedProduct = action.payload;
     },
-    setProductLoading(state, action: PayloadAction<boolean>) {
+    setProductLoading(state: ProductState, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
-    setProductError(state, action: PayloadAction<string | null>) {
+    setProductError(state: ProductState, action: PayloadAction<string | null>) {
       state.error = action.payload;
     },
   },

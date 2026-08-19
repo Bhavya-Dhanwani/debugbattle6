@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../state/store';
+import type { RootState } from '../state/store';
 import { getProducts, getProductById } from '../api/product.api';
 import {
   setProducts,
@@ -26,11 +26,10 @@ export const useProducts = () => {
     dispatch(setProductLoading(true));
     dispatch(setProductError(null));
     try {
-      // If "ALL" category is selected, do not pass it to backend filter
       const catFilter = category === 'ALL' ? undefined : category;
       const response = await getProducts(catFilter, search);
       if (response.success && response.data) {
-        dispatch(setProducts(response.data.products as any));
+        dispatch(setProducts(response.data as any));
       } else {
         dispatch(setProductError(response.message || 'Failed to fetch products'));
       }
@@ -49,7 +48,7 @@ export const useProducts = () => {
     try {
       const response = await getProductById(id);
       if (response.success && response.data) {
-        dispatch(setSelectedProduct(response.data.product as any));
+        dispatch(setSelectedProduct(response.data as any));
       } else {
         dispatch(setProductError(response.message || 'Failed to fetch product details'));
       }
@@ -63,12 +62,10 @@ export const useProducts = () => {
 
   const changeCategory = (category: string) => {
     dispatch(setSelectedCategory(category));
-    fetchProducts(category, searchQuery);
   };
 
   const changeSearchQuery = (query: string) => {
     dispatch(setSearchQuery(query));
-    fetchProducts(selectedCategory, query);
   };
 
   return {

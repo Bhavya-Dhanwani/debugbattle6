@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../state/store';
+import type { RootState } from '../state/store';
 import { getCart, addItemToCart, updateCartItem, removeItemFromCart } from '../api/cart.api';
 import { setCart, clearCart, setCartLoading, setCartError } from '../state/slices/cart.slice';
 
@@ -15,7 +15,7 @@ export const useCart = () => {
     try {
       const response = await getCart();
       if (response.success && response.data) {
-        dispatch(setCart((response.data.cart?.items || []) as any));
+        dispatch(setCart((response.data.items || []) as any));
       } else {
         dispatch(setCartError(response.message || 'Failed to fetch cart'));
       }
@@ -36,7 +36,7 @@ export const useCart = () => {
     try {
       const response = await addItemToCart(productId, quantity);
       if (response.success && response.data) {
-        dispatch(setCart((response.data.cart?.items || []) as any));
+        dispatch(setCart((response.data.items || []) as any));
         return { success: true };
       } else {
         const msg = response.message || 'Failed to add item to cart';
@@ -62,7 +62,7 @@ export const useCart = () => {
     try {
       const response = await updateCartItem(productId, quantity);
       if (response.success && response.data) {
-        dispatch(setCart((response.data.cart?.items || []) as any));
+        dispatch(setCart((response.data.items || []) as any));
         return { success: true };
       } else {
         const msg = response.message || 'Failed to update quantity';
@@ -85,7 +85,7 @@ export const useCart = () => {
     try {
       const response = await removeItemFromCart(productId);
       if (response.success && response.data) {
-        dispatch(setCart((response.data.cart?.items || []) as any));
+        dispatch(setCart((response.data.items || []) as any));
         return { success: true };
       } else {
         const msg = response.message || 'Failed to remove item';
@@ -105,12 +105,12 @@ export const useCart = () => {
     dispatch(clearCart());
   };
 
-  const subtotal = items.reduce((acc, item) => {
+  const subtotal = items.reduce((acc: number, item: any) => {
     const price = item.product?.price || 0;
     return acc + price * item.quantity;
   }, 0);
 
-  const itemCount = items.reduce((acc, item) => acc + item.quantity, 0);
+  const itemCount = items.reduce((acc: number, item: any) => acc + item.quantity, 0);
 
   return {
     items,

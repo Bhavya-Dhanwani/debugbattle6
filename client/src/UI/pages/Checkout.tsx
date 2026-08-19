@@ -7,7 +7,6 @@ import { useOrders } from '../../hooks/useOrders';
 import { ArrowLeft, CreditCard, Landmark, Truck, CheckCircle, AlertCircle } from 'lucide-react';
 
 export const Checkout: React.FC = () => {
-  const navigate = useNavigate();
   const { items, subtotal, itemCount, fetchCart, clearCart } = useCart();
   const { createOrder, loading, error } = useOrders();
 
@@ -278,7 +277,7 @@ export const Checkout: React.FC = () => {
 
             {/* Micro items summary */}
             <div className="max-h-48 overflow-y-auto space-y-3 pr-2 scrollbar-thin">
-              {items.map((item) => (
+              {items.map((item: any) => (
                 <div key={item.product._id} className="flex justify-between items-center text-xs">
                   <div className="flex items-center space-x-2 truncate">
                     <img

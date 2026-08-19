@@ -30,18 +30,18 @@ const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    setCart(state, action: PayloadAction<CartItem[]>) {
+    setCart(state: CartState, action: PayloadAction<CartItem[]>) {
       state.items = action.payload;
       state.error = null;
     },
-    clearCart(state) {
+    clearCart(state: CartState) {
       state.items = [];
       state.error = null;
     },
-    setCartLoading(state, action: PayloadAction<boolean>) {
+    setCartLoading(state: CartState, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
-    setCartError(state, action: PayloadAction<string | null>) {
+    setCartError(state: CartState, action: PayloadAction<string | null>) {
       state.error = action.payload;
     },
   },

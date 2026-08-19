@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../state/store';
+import type { RootState } from '../state/store';
 import { placeOrder, getOrderHistory } from '../api/order.api';
 
 export const useOrders = () => {
@@ -16,7 +16,7 @@ export const useOrders = () => {
     try {
       const response = await getOrderHistory();
       if (response.success && response.data) {
-        setOrders(response.data.orders || []);
+        setOrders(response.data);
       } else {
         setError(response.message || 'Failed to fetch order history');
       }
@@ -35,7 +35,7 @@ export const useOrders = () => {
     try {
       const response = await placeOrder();
       if (response.success && response.data) {
-        return { success: true, order: response.data.order };
+        return { success: true, order: response.data };
       } else {
         const msg = response.message || 'Failed to place order';
         setError(msg);
