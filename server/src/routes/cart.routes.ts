@@ -4,6 +4,60 @@ import { protect } from "../middlewares/auth.middleware";
 
 const router = Router();
 
+/**
+ * @openapi
+ * /api/cart:
+ *   get:
+ *     security:
+ *       - BearerAuth: []
+ *     tags:
+ *       - Cart
+ *     summary: Retrieve user's cart
+ *     description: Gets the currently authenticated user's shopping cart.
+ *     operationId: getCart
+ *     responses:
+ *       200:
+ *         description: Cart fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CartResponse'
+ *       401:
+ *         description: Not authorized
+ *       500:
+ *         description: Server error
+ *   post:
+ *     security:
+ *       - BearerAuth: []
+ *     tags:
+ *       - Cart
+ *     summary: Add item to cart
+ *     description: Adds a product with a specified quantity to the authenticated user's cart.
+ *     operationId: addItemToCart
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AddCartItemDTO'
+ *     responses:
+ *       200:
+ *         description: Item added to cart successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CartResponse'
+ *       401:
+ *         description: Not authorized
+ *       400:
+ *         description: Bad request (e.g. invalid product ID or insufficient stock)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Server error
+ */
 router.post("/", protect, cartController.addItemToCart);
 router.get("/", protect, cartController.getCart);
 

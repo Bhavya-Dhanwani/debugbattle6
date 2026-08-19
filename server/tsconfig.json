@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "commonjs",
     "lib": [
       "ES2020"
     ],
@@ -12,7 +11,8 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "moduleResolution": "node",
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
     "declaration": false,
     "sourceMap": true,
     "noUnusedLocals": true,
@@ -21,8 +21,7 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "src/**/*.ts",
-    "server.ts"
+    "src/**/*.ts"
   ],
   "exclude": [
     "node_modules",

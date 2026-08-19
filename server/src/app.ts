@@ -3,6 +3,8 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import routes from "./routes";
 import { errorHandler, notFound } from "./middlewares/error.middleware";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./config/swagger";
 
 const app: Application = express();
 
@@ -19,6 +21,20 @@ app.use(cookieParser());
 app.get("/", (_req: Request, res: Response) => {
   res.json({ success: true, message: "E-commerce backend is running" });
 });
+
+app.get(["/docs.json", "/openapi.json", "/api-docs.json"], (_req: Request, res: Response) => {
+  res.setHeader("Content-Type", "application/json");
+  res.send(swaggerSpec);
+});
+
+app.use(
+  ["/docs", "/api-docs"],
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    explorer: true,
+    customSiteTitle: "E-Commerce API Docs",
+  })
+);
 
 app.use("/api", routes);
 
